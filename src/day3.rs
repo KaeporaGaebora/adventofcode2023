@@ -1,5 +1,5 @@
 use ndarray::prelude::*;
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::fmt::{Display, Formatter};
 use std::hash::Hash;
 
@@ -86,6 +86,84 @@ pub fn process(input: String) -> String {
         .map(|&c| get_full_number(&a, c))
         .reduce(|acc, c| acc + c)
         .unwrap();
+
+    sum.to_string()
+}
+
+pub fn process2(input: String) -> String {
+    let ylen = input.find('\n').unwrap();
+    let xlen = input.lines().count();
+
+    let a = fill_array(input);
+
+    //also create an array used for marking
+    //for each number, which cog is it near, and how many touches does it have
+    let mut found_numbers: HashSet<Coord> = HashSet::new();
+
+    //get x,y coordinate of symbols
+    let mut points = Vec::new();
+
+    for (x, line) in a.outer_iter().enumerate() {
+        for (y, c) in line.iter().enumerate() {
+            // println!("{},{} is {}", x, y, c);
+            if c.eq(&'*') {
+                // let symbols = "@#$%&*-=+/";
+                let coord = Coord { x, y };
+                println!("found a symbol {} at {}", c, coord);
+                points.push(coord)
+            }
+        }
+    }
+
+    println!("{:?}", a);
+
+    //search around symbols for numbers.
+
+    let cardinal_directions: [(i32, i32); 8] = [
+        (-1, -1),
+        (-1, 0),
+        (-1, 1),
+        (0, -1),
+        (0, 1),
+        (1, -1),
+        (1, 0),
+        (1, 1),
+    ];
+    //8 cardinal directions
+    //search left and right to get all the number
+
+    let mut sum = 0;
+    for point in points {
+        for (u, v) in cardinal_directions {
+            if let Some(digit_search_coord) = point.add_vec(u, v) {
+                if let Some(grabbedchar) = get_char_valid(&a, digit_search_coord) {
+                    if grabbedchar.is_ascii_digit() {
+                        println!(
+                            "found a dig {} at {} near {}",
+                            grabbedchar, digit_search_coord, point
+                        );
+                        //search left to find start of number
+                        let first = get_first_digit(&a, digit_search_coord);
+
+                        found_numbers.insert(first);
+                    }
+                }
+            }
+        }
+
+        //if exactly 2 numbers on this gear, multiply them
+        if found_numbers.len() == 2 {
+            sum += found_numbers
+                .iter()
+                .map(|&c| get_full_number(&a, c))
+                .reduce(|acc, c| acc * c)
+                .unwrap();
+        } else {
+            // let nums:Vec<Coord> = found_numbers.iter().collect();
+            println!("bad gear: {}", found_numbers.len());
+        }
+        found_numbers.clear();
+    }
 
     sum.to_string()
 }
@@ -181,7 +259,7 @@ fn get_char_valid(a: &Array<char, Ix2>, coord: Coord) -> Option<char> {
 
 #[cfg(test)]
 mod tests {
-    use crate::day3::{fill_array, get_first_digit, get_full_number, process, Coord};
+    use crate::day3::{fill_array, get_first_digit, get_full_number, process, process2, Coord};
 
     #[test]
     fn test1() {
@@ -199,6 +277,24 @@ mod tests {
                 .to_string(),
         );
         assert_eq!(result, "4361");
+    }
+
+    #[test]
+    fn test_part2() {
+        let result = process2(
+            "467..114..
+...*......
+..35..633.
+......#...
+617*......
+.....+.58.
+..592.....
+......755.
+...$.*....
+.664.598.."
+                .to_string(),
+        );
+        assert_eq!(result, "467835");
     }
 
     #[test]
