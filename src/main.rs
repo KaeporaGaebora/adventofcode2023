@@ -1,6 +1,7 @@
 mod day1;
 mod day2;
 mod day3;
+mod day4;
 
 use clap::Parser;
 use std::fs::read_to_string;
@@ -30,6 +31,7 @@ fn main() {
                 1 => day1::process(file_as_string),
                 2 => day2::process2(file_as_string),
                 3 => day3::process2(file_as_string),
+                4 => day4::process2(file_as_string),
                 _ => {
                     panic!("bad day input, or day not completed");
                 }

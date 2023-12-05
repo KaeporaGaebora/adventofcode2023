@@ -1,5 +1,5 @@
 use ndarray::prelude::*;
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 use std::fmt::{Display, Formatter};
 use std::hash::Hash;
 
@@ -19,8 +19,8 @@ fn fill_array(input: String) -> Array<char, Ix2> {
 }
 
 pub fn process(input: String) -> String {
-    let ylen = input.find('\n').unwrap();
-    let xlen = input.lines().count();
+    // let ylen = input.find('\n').unwrap();
+    // let xlen = input.lines().count();
 
     let a = fill_array(input);
 
@@ -91,8 +91,8 @@ pub fn process(input: String) -> String {
 }
 
 pub fn process2(input: String) -> String {
-    let ylen = input.find('\n').unwrap();
-    let xlen = input.lines().count();
+    // let ylen = input.find('\n').unwrap();
+    // let xlen = input.lines().count();
 
     let a = fill_array(input);
 
@@ -307,8 +307,8 @@ mod tests {
 ..65"
             .to_string();
 
-        let ylen = input.find('\n').unwrap();
-        let xlen = input.lines().count();
+        // let ylen = input.find('\n').unwrap();
+        // let xlen = input.lines().count();
 
         let a = fill_array(input);
 
