@@ -5,8 +5,8 @@ use regex::Regex;
 use std::collections::{BTreeSet, HashSet};
 
 lazy_static! {
-    static ref digit_reg: Regex = Regex::new(r"(\d+)").unwrap();
-    static ref triplet_reg: Regex = Regex::new(r"(\d+) (\d+) (\d+)").unwrap();
+    static ref DIGIT_RE: Regex = Regex::new(r"(\d+)").unwrap();
+    static ref TRIPLET_RE: Regex = Regex::new(r"(\d+) (\d+) (\d+)").unwrap();
 }
 pub fn process(input: String) -> String {
     let parts: Vec<&str> = input.split("\n\n").collect();
@@ -119,7 +119,7 @@ fn part_2_seedrange(seedrange: Vec<u64>) -> BTreeSet<[u64; 2]> {
 }
 
 fn get_seeds(input: &str) -> Vec<u64> {
-    digit_reg
+    DIGIT_RE
         .captures_iter(input)
         .map(|c| c.extract())
         .map(|(_, [mat])| mat.parse::<u64>().unwrap())
@@ -127,7 +127,7 @@ fn get_seeds(input: &str) -> Vec<u64> {
 }
 
 fn get_mapping(input: &str) -> Vec<(u64, u64, u64)> {
-    triplet_reg
+    TRIPLET_RE
         .captures_iter(input)
         .map(|c| c.extract())
         .map(|(_, [dst, src, rng])| {
@@ -295,7 +295,7 @@ fn conversion_one(input: u64, mapping: &Vec<(u64, u64, u64)>) -> u64 {
 
 #[cfg(test)]
 mod tests {
-    use crate::day5::{conversion_one, get_mapping, process, process2};
+    use super::*;
 
     #[test]
     fn test1() {
